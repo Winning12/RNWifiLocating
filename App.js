@@ -11,42 +11,63 @@ import {
     View ,
     Text,
     TouchableOpacity,
-    NativeModules   
+    NativeModules,
+    PermissionsAndroid
+    
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window')
 export default class App extends Component {
 
-  _wifi(){
-    NativeModules.WifiM.getInfo((success)=>{alert(success)},(error)=>{alert(error)});
+  constructor(props){
+    super(props);
+    this.state={
+        data:[],
+    }
+    this.setState=this.setState.bind(this)
   }
+
+  _wifi=()=>{
+    NativeModules.WifiM.getInfo((success)=>{
+      this.setState({data:success})
+    },(error)=>{alert(error)});
+  }
+
   render(){
     return(
       <View style={{flex:1}}>
+        <TouchableOpacity
+          onPress={this.requestReadPermission.bind(this)}>
+          <Text>申请读写权限</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={this._wifi}>
             <Text>获取信息</Text>
+            <Text>{this.state.data}</Text>
         </TouchableOpacity>
        </View>
     );
   }
 
-renderItem() {
-    // 数组
-    var itemAry = [];
-    // 颜色数组
-    var colorAry = ['gray', 'green', 'blue', 'yellow', 'black', 'orange'];
-    // 遍历
-    for (var i = 0; i<colorAry.length; i++) {
-        itemAry.push(
-            <View key={i} style={[styles.itemStyle, {backgroundColor: colorAry[i]}]}></View>
-        );
+  async requestReadPermission() {
+    try {
+        //返回string类型
+        const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                //第一次请求拒绝后提示用户你为什么要这个权限
+                'title': '检测到安卓6.0以上版本',
+                'message': '基于wifi的室内定位在安卓6.0版本后被划为位置信息，请您同意接下来的权限申请'
+            }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            this.show("你已获取了位置权限")
+        } else {
+            this.show("获取位置权限失败")
+        }
+    } catch (err) {
+        this.show(err.toString())
     }
-    return itemAry;
-}
-
-    sigleTap() { // 手势这个暂未搞明白
-        var timestamp = new Date().getTime(); // 时间戳
-    }
+  }
 
 }
 var styles = StyleSheet.create({
