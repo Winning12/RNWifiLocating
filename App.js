@@ -26,7 +26,8 @@ export default class App extends Component {
         data:[],
         imageUrl:'',
         building:['仙Ⅰ', '仙Ⅱ'],
-        floor:[1, 2, 3, 4, 5]
+        floor:[1, 2, 3, 4, 5],
+        currentBuilding:''
     }
     this.setState=this.setState.bind(this)
   }
@@ -37,7 +38,7 @@ export default class App extends Component {
     },(error)=>{alert(error)});
   }
 
-  initUrl(){
+  initLocation(){
     {/**根据wifi的MAC地址获取初始化位置 */}
   }
 
@@ -62,8 +63,9 @@ export default class App extends Component {
             {this.getAvailableClassroom()}
           </ScrollView>
         </View>
-        <View style={{flex:1}}>
-          <Picker selectedValue={this.state.building[0]}>
+        <View style={styles.pickerViewContainer}>
+          <Picker style={styles.pickerStyle} 
+                  selectedValue={this.state.building[0]}>
 
           </Picker>
         </View>
@@ -104,4 +106,12 @@ var styles = StyleSheet.create({
       width:1000,
       height:200
   },
+  pickerViewContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: 30
+  },
+  pickerStyle: {
+    flex:1
+  }
 });
