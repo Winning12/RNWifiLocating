@@ -15,6 +15,7 @@ import {
     PermissionsAndroid
 } from 'react-native';
 import { UltimateListView } from 'react-native-ultimate-listview'
+import ListItem from './src/Component/ListItem'
 
 const { width, height } = Dimensions.get('window')
 export default class App extends Component {
@@ -47,7 +48,7 @@ export default class App extends Component {
   render(){
     return(
       <View style={{flex:1}}>
-        <Image source={imageUrl} style={{flex:4}}></Image> {/**页面分为10份 */}
+        {/* <Image source={this.state.imageUrl} style={{flex:4}}/> */}
         <TouchableOpacity
           onPress={this.requestReadPermission.bind(this)}>
           <Text>申请读写权限</Text>
@@ -77,10 +78,9 @@ export default class App extends Component {
 
   renderItem = (item, index, separator) => {
       return(
-          <View>
-                <Text>{item.MacAdd}</Text>
-                <Text>{item.Level}</Text>
-          </View>
+          <ListItem
+          name={item.MacAdd}
+          distance={item.Level}/>
       )
   }
 
