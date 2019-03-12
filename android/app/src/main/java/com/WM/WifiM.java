@@ -86,13 +86,19 @@ public class WifiM extends ReactContextBaseJavaModule{
     public void getInfo( Callback success,Callback error) {
         try {
             List<ScanResult> sRes=startScan(reactContext);
-            String res="";
-            for(int i=0;i<sRes.size();i++)
-                res+=sRes.get(i).BSSID+" "+sRes.get(i).level+"\n";
+            String res="{\"content\":[";
             if(sRes.size()==0)
                 success.invoke(mWifiManager.getWifiState());
-            else
+            else {
+                for(int i=0;i<sRes.size();i++){
+                    res+="{ \"MacAdd\":\""+sRes.get(i).BSSID+"\" , "+"\"Level\":\""+sRes.get(i).level+"\" }";
+                    if(i!=sRes.size()-1){
+                        res+=",";
+                    }
+                }
+                res+="]}";
                 success.invoke(res);
+            }
         }
         catch (Exception e){
             StringWriter writer = new StringWriter();
