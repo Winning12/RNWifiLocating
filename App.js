@@ -13,8 +13,8 @@ import {
     TouchableOpacity,
     NativeModules,
     PermissionsAndroid
-    
 } from 'react-native';
+import { UltimateListView } from 'react-native-ultimate-listview'
 
 const { width, height } = Dimensions.get('window')
 export default class App extends Component {
@@ -24,13 +24,13 @@ export default class App extends Component {
     this.state={
         data:[],
     }
-    this.setState=this.setState.bind(this)
   }
 
-  _wifi=()=>{
+  onFetch =async(page = 1, startFetch, abortFetch) => {
     NativeModules.WifiM.getInfo((success)=>{
-      this.setState({data:success})
+        this.setState({data:JSON.parse(success).content})
     },(error)=>{alert(error)});
+    startFetch(this.state.data,20);
   }
 
   render(){
@@ -40,12 +40,36 @@ export default class App extends Component {
           onPress={this.requestReadPermission.bind(this)}>
           <Text>申请读写权限</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={this._wifi}>
+        <TouchableOpacity onPress={this.onFetch}>
             <Text>获取信息</Text>
-            <Text>{this.state.data}</Text>
         </TouchableOpacity>
+        <UltimateListView
+            ref={(ref) => this.listView = ref}
+            onFetch={this.onFetch}
+            refreshableMode="basic" //basic or advanced
+            item={this.renderItem}  //this takes two params (item, index)
+            numColumns={1} //to use grid layout, simply set gridColumn > 1
+
+            //----Extra Config----
+            //header={this.renderHeaderView}
+            //paginationFetchingView={this.renderPaginationFetchingView}
+            //paginationFetchingView={this.renderPaginationFetchingView}
+            //paginationAllLoadedView={this.renderPaginationAllLoadedView}
+            //paginationWaitingView={this.renderPaginationWaitingView}
+            //emptyView={this.renderEmptyView}
+            //separator={this.renderSeparatorView}                
+            />
        </View>
     );
+  }
+
+  renderItem = (item, index, separator) => {
+      return(
+          <View>
+                <Text>{item.MacAdd}</Text>
+                <Text>{item.Level}</Text>
+          </View>
+      )
   }
 
   async requestReadPermission() {
@@ -54,7 +78,6 @@ export default class App extends Component {
         const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
-                //第一次请求拒绝后提示用户你为什么要这个权限
                 'title': '检测到安卓6.0以上版本',
                 'message': '基于wifi的室内定位在安卓6.0版本后被划为位置信息，请您同意接下来的权限申请'
             }
