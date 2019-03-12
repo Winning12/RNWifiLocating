@@ -12,7 +12,8 @@ import {
     Text,
     TouchableOpacity,
     NativeModules,
-    PermissionsAndroid
+    PermissionsAndroid,
+    Picker
     
 } from 'react-native';
 
@@ -23,6 +24,9 @@ export default class App extends Component {
     super(props);
     this.state={
         data:[],
+        imageUrl:'',
+        building:['仙Ⅰ', '仙Ⅱ'],
+        floor:[1, 2, 3, 4, 5]
     }
     this.setState=this.setState.bind(this)
   }
@@ -33,9 +37,18 @@ export default class App extends Component {
     },(error)=>{alert(error)});
   }
 
+  initUrl(){
+    {/**根据wifi的MAC地址获取初始化位置 */}
+  }
+
+  getAvailableClassroom(){
+    {/**获取附近教室 */}
+  }
+
   render(){
     return(
       <View style={{flex:1}}>
+        <Image source={imageUrl} style={{flex:4}}></Image> {/**页面分为10份 */}
         <TouchableOpacity
           onPress={this.requestReadPermission.bind(this)}>
           <Text>申请读写权限</Text>
@@ -44,7 +57,17 @@ export default class App extends Component {
             <Text>获取信息</Text>
             <Text>{this.state.data}</Text>
         </TouchableOpacity>
-       </View>
+        <View style={{flex:5}}>
+          <ScrollView contentContainerStyle={{paddingVertical:20}}>
+            {this.getAvailableClassroom()}
+          </ScrollView>
+        </View>
+        <View style={{flex:1}}>
+          <Picker selectedValue={this.state.building[0]}>
+
+          </Picker>
+        </View>
+      </View>
     );
   }
 
