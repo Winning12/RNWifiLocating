@@ -23,6 +23,9 @@ export default class App extends Component {
     super(props);
     this.state={
         data:[],
+        imageUrl:'',
+        building:['仙Ⅰ', '仙Ⅱ'],
+        floor:[1, 2, 3, 4, 5]
     }
   }
 
@@ -33,9 +36,18 @@ export default class App extends Component {
     startFetch(this.state.data,20);
   }
 
+  initUrl(){
+    {/**根据wifi的MAC地址获取初始化位置 */}
+  }
+
+  getAvailableClassroom(){
+    {/**获取附近教室 */}
+  }
+
   render(){
     return(
       <View style={{flex:1}}>
+        <Image source={imageUrl} style={{flex:4}}></Image> {/**页面分为10份 */}
         <TouchableOpacity
           onPress={this.requestReadPermission.bind(this)}>
           <Text>申请读写权限</Text>
