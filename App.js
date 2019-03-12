@@ -16,6 +16,9 @@ import {
 } from 'react-native';
 import { UltimateListView } from 'react-native-ultimate-listview'
 import ListItem from './src/Component/ListItem'
+import ActionButton from 'react-native-action-button'
+import Icon from 'react-native-vector-icons/Ionicons';
+import Picker from 'react-native-picker'
 
 const { width, height } = Dimensions.get('window')
 export default class App extends Component {
@@ -29,12 +32,34 @@ export default class App extends Component {
         floor:[1, 2, 3, 4, 5]
     }
   }
+  
+  refresh=()=>{
+      this.listView.refresh()
+  }
 
   onFetch =async(page = 1, startFetch, abortFetch) => {
     NativeModules.WifiM.getInfo((success)=>{
         this.setState({data:JSON.parse(success).content})
     },(error)=>{alert(error)});
     startFetch(this.state.data,20);
+  }
+
+  showPicker(){
+    let locationData = [['仙Ⅰ', '仙Ⅱ'], ['F1', 'F2', 'F3', 'F4', 'F5']]
+    Picker.init({
+        pickerCancelBtnText:'取消',
+        pickerConfirmBtnText:'确认',
+        pickerTitleText: '请选择教学楼和楼层',
+        pickerData: locationData,
+        selectedValue: ['仙Ⅰ', '1F'],
+        onPickerConfirm: data => {
+            this.setState({
+                currentBuilding: data[0],
+                currentFloor: data[1]
+            })//不确定语法
+        }
+    });
+    Picker.show();
   }
 
   initUrl(){
@@ -72,6 +97,14 @@ export default class App extends Component {
             //emptyView={this.renderEmptyView}
             //separator={this.renderSeparatorView}                
             />
+        <ActionButton buttonColor="rgba(231,76,60,1)" position="right" verticalOrientation='up'>
+          <ActionButton.Item buttonColor='#9b59b6' title="选择楼层" onPress={this.showPicker}>
+            <Icon name="md-create"/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#3498db' title="刷新" onPress={this.refresh}>
+            <Icon name="ios-notifications-off" />
+          </ActionButton.Item>
+        </ActionButton>
        </View>
     );
   }

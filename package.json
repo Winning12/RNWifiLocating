@@ -9,9 +9,12 @@
   "dependencies": {
     "react": "16.6.3",
     "react-native": "0.58.6",
+    "react-native-action-button": "^2.8.5",
     "react-native-gesture-responder": "^0.1.1",
+    "react-native-picker": "^4.3.7",
     "react-native-scroller": "0.0.6",
-    "react-native-ultimate-listview": "^3.3.0"
+    "react-native-ultimate-listview": "^3.3.0",
+    "react-native-vector-icons": "^6.4.0"
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",
