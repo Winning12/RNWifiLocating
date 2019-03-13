@@ -29,7 +29,9 @@ export default class App extends Component {
         data:[],
         imageUrl:'',
         building:['仙Ⅰ', '仙Ⅱ'],
-        floor:[1, 2, 3, 4, 5]
+        floor:[1, 2, 3, 4, 5],
+        currentBuilding:'仙Ⅱ',
+        currentFloor:5
     }
   }
   
@@ -44,19 +46,27 @@ export default class App extends Component {
     startFetch(this.state.data,20);
   }
 
-  showPicker(){
+  _setState=(data)=>{
+    this.setState({
+      currentBuilding: data[0],
+      currentFloor: data[1]
+  })
+  }//不确定语法
+
+  showPicker = ()=> {
     let locationData = [['仙Ⅰ', '仙Ⅱ'], ['F1', 'F2', 'F3', 'F4', 'F5']]
     Picker.init({
         pickerCancelBtnText:'取消',
         pickerConfirmBtnText:'确认',
         pickerTitleText: '请选择教学楼和楼层',
+        pickerConfirmBtnColor: [184,34,221,1],
+        pickerCancelBtnColor: [184,34,221,1],
+        pickerBg: [255,255,255,1],
+        pickerToolBarFontSize: 16,
         pickerData: locationData,
         selectedValue: ['仙Ⅰ', '1F'],
-        onPickerConfirm: data => {
-            this.setState({
-                currentBuilding: data[0],
-                currentFloor: data[1]
-            })//不确定语法
+        onPickerConfirm: (data) => {
+            this._setState(data)
         }
     });
     Picker.show();
@@ -99,10 +109,10 @@ export default class App extends Component {
             />
         <ActionButton buttonColor="rgba(231,76,60,1)" position="right" verticalOrientation='up'>
           <ActionButton.Item buttonColor='#9b59b6' title="选择楼层" onPress={this.showPicker}>
-            <Icon name="md-create"/>
+            <Icon name="ios-pin-outline" style={styles.actionButtonIcon}/>{/**图标问题 */}
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="刷新" onPress={this.refresh}>
-            <Icon name="ios-notifications-off" />
+            <Icon name="md-refresh" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
        </View>
@@ -149,4 +159,9 @@ var styles = StyleSheet.create({
       width:1000,
       height:200
   },
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  }
 });
