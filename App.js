@@ -15,7 +15,8 @@ import {
     PermissionsAndroid
 } from 'react-native';
 import { UltimateListView } from 'react-native-ultimate-listview'
-import ListItem from './src/Component/ListItem'
+// import ListItem from './src/Component/ListItem'
+import ListItemElement from './src/Component/ListItemElement'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker'
@@ -72,14 +73,6 @@ export default class App extends Component {
     Picker.show();
   }
 
-  initUrl(){
-    {/**根据wifi的MAC地址获取初始化位置 */}
-  }
-
-  getAvailableClassroom(){
-    {/**获取附近教室 */}
-  }
-
   render(){
     return(
       <View style={{flex:1}}>
@@ -90,6 +83,7 @@ export default class App extends Component {
         </TouchableOpacity>
         <TouchableOpacity onPress={this.onFetch}>
             <Text>获取信息</Text>
+            {/* <Text>{JSON.stringify(this.state.data)}</Text> */}
         </TouchableOpacity>
         <UltimateListView
             ref={(ref) => this.listView = ref}
@@ -121,7 +115,7 @@ export default class App extends Component {
 
   renderItem = (item, index, separator) => {
       return(
-          <ListItem
+          <ListItemElement
           name={item.MacAdd}
           distance={item.Level}/>
       )
