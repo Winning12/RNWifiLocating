@@ -162,7 +162,7 @@ var styles = StyleSheet.create({
   },
   header:{
     flexDirection: 'row',
-    height: height+5,
+    height: height+10,
     borderColor:'rgb(230,230,230)',
     backgroundColor:'rgb(248,248,248)',
     alignItems: 'center',
