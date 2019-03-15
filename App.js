@@ -17,9 +17,11 @@ import {
 import { UltimateListView } from 'react-native-ultimate-listview'
 // import ListItem from './src/Component/ListItem'
 import ListItemElement from './src/Component/ListItemElement'
+import _Map from './src/Component/Map'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker'
+import * as Animatable from 'react-native-animatable';
 
 const { width, height } = Dimensions.get('window')
 export default class App extends Component {
@@ -35,9 +37,16 @@ export default class App extends Component {
         currentFloor:5
     }
   }
+
+  componentDidMount(){
+    NativeModules.WifiM.getInfo((success)=>{
+        this.setState({data:JSON.parse(success).content})
+        this.listView.refresh()
+    },(error)=>{alert(error)});
+  }
   
   refresh=()=>{
-      this.listView.refresh()
+    this.listView.refresh()
   }
 
   onFetch =async(page = 1, startFetch, abortFetch) => {
@@ -76,15 +85,13 @@ export default class App extends Component {
   render(){
     return(
       <View style={{flex:1}}>
-        {/* <Image source={this.state.imageUrl} style={{flex:4}}/> */}
-        <TouchableOpacity
-          onPress={this.requestReadPermission.bind(this)}>
-          <Text>申请读写权限</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.onFetch}>
-            <Text>获取信息</Text>
-            {/* <Text>{JSON.stringify(this.state.data)}</Text> */}
-        </TouchableOpacity>
+        <Animatable.View 
+        animation='fadeIn' 
+        duration={600}
+        style={styles.header} 
+        useNativeDriver>
+          <_Map/>
+        </Animatable.View>
         <UltimateListView
             ref={(ref) => this.listView = ref}
             onFetch={this.onFetch}
@@ -100,9 +107,12 @@ export default class App extends Component {
             //paginationWaitingView={this.renderPaginationWaitingView}
             //emptyView={this.renderEmptyView}
             //separator={this.renderSeparatorView}                
-            />
+        />
         <ActionButton buttonColor="rgba(231,76,60,1)" position="right" verticalOrientation='up'>
-          <ActionButton.Item buttonColor='#9b59b6' title="选择楼层" onPress={this.showPicker}>
+          <ActionButton.Item buttonColor='#663366' title="权限重新申请" onPress={this.requestReadPermission}>
+            <Icon name="ios-pin-outline" style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
+          <ActionButton.Item buttonColor='#996699' title="选择楼层" onPress={this.showPicker}>
             <Icon name="ios-pin-outline" style={styles.actionButtonIcon}/>{/**图标问题 */}
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="刷新" onPress={this.refresh}>
@@ -112,6 +122,7 @@ export default class App extends Component {
        </View>
     );
   }
+
 
   renderItem = (item, index, separator) => {
       return(
@@ -143,19 +154,18 @@ export default class App extends Component {
 
 }
 var styles = StyleSheet.create({
-  scrollViewStyle: {
-      // 背景色
-      backgroundColor:'red'
-  },
-
-  itemStyle: {
-      // 尺寸
-      width:1000,
-      height:200
-  },
   actionButtonIcon: {
     fontSize: 20,
     height: 22,
     color: 'white',
+  },
+  header:{
+    flexDirection: 'row',
+    height: width*2/3,
+    borderBottomWidth:2,
+    borderColor:'rgb(230,230,230)',
+    backgroundColor:'rgb(248,248,248)',
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });

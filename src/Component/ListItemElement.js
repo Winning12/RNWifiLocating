@@ -7,12 +7,14 @@ import {
     View ,
     Text,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    ART
 } from 'react-native';
 import { ListItem,Divider } from 'react-native-elements'
 import * as Animatable from 'react-native-animatable';
 import TouchableScale from 'react-native-touchable-scale'; 
 import LinearGradient from 'react-native-linear-gradient';
+
 
 export default class ListItemElement extends Component {
     constructor(props){
@@ -86,7 +88,7 @@ export default class ListItemElement extends Component {
             containerStyle={styles.itemStyle}
             bottomDivider
             key={2}
-            leftIcon={{ name:'location',type:'octicon',size:20,style:{margin:0,padding:0} }}
+            leftIcon={{ name:'organization',type:'octicon',size:20,style:{margin:0,padding:0} }}
             title="预估人数：XXXX"
             titleStyle={{ fontSize:17 }}
             />
