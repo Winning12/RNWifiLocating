@@ -23,7 +23,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Picker from 'react-native-picker'
 import * as Animatable from 'react-native-animatable';
 
-const { width, height } = Dimensions.get('window')
+const { width} = Dimensions.get('window')
+const height=width*1034/1697
 export default class App extends Component {
 
   constructor(props){
@@ -109,13 +110,13 @@ export default class App extends Component {
             //separator={this.renderSeparatorView}                
         />
         <ActionButton buttonColor="rgba(231,76,60,1)" position="right" verticalOrientation='up'>
-          <ActionButton.Item buttonColor='#663366' title="权限重新申请" onPress={this.requestReadPermission}>
-            <Icon name="ios-pin-outline" style={styles.actionButtonIcon}/>
+          <ActionButton.Item buttonColor='#9b59b6' title="权限重新申请" onPress={this.requestReadPermission}>
+            <Icon name="md-repeat" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#996699' title="选择楼层" onPress={this.showPicker}>
+          <ActionButton.Item buttonColor='#3498db' title="选择楼层" onPress={this.showPicker}>
             <Icon name="ios-pin-outline" style={styles.actionButtonIcon}/>{/**图标问题 */}
           </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title="刷新" onPress={this.refresh}>
+          <ActionButton.Item buttonColor='#1abc9c' title="刷新" onPress={this.refresh}>
             <Icon name="md-refresh" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
         </ActionButton>
@@ -127,7 +128,7 @@ export default class App extends Component {
   renderItem = (item, index, separator) => {
       return(
           <ListItemElement
-          name={item.MacAdd}
+          MacAdd={item.MacAdd}
           distance={item.Level}/>
       )
   }
@@ -161,8 +162,7 @@ var styles = StyleSheet.create({
   },
   header:{
     flexDirection: 'row',
-    height: width*2/3,
-    borderBottomWidth:2,
+    height: height+5,
     borderColor:'rgb(230,230,230)',
     backgroundColor:'rgb(248,248,248)',
     alignItems: 'center',
