@@ -24,7 +24,7 @@ import Picker from 'react-native-picker'
 import * as Animatable from 'react-native-animatable';
 
 const { width} = Dimensions.get('window')
-const height=width*1034/1697
+const height=width*1034/1607
 export default class App extends Component {
 
   constructor(props){
@@ -35,20 +35,39 @@ export default class App extends Component {
         building:['仙Ⅰ', '仙Ⅱ'],
         floor:[1, 2, 3, 4, 5],
         currentBuilding:'仙Ⅱ',
-        currentFloor:5
+        currentFloor:4,
+        path:[511,519],
+        start:"",
+        des:"",
+        level:-100,
     }
+  }
+  
+  up(x,y){//用于将数据升序显示
+    return y.Level-x.Level
   }
 
   componentDidMount(){
     NativeModules.WifiM.getInfo((success)=>{
-        this.setState({data:JSON.parse(success).content})
+        let content=JSON.parse(success).content
+        content.sort(this.up)
+        this.setState({data:content})
         this.listView.refresh()
     },(error)=>{alert(error)});
   }
   
   refresh=()=>{
-    this.listView.refresh()
+    this.state.data=[]
+    this.state.level=-100
+    this.listView.updateDataSource(this.state.data)	
+    NativeModules.WifiM.getInfo((success)=>{
+        let content=JSON.parse(success).content
+        content.sort(this.up)
+        this.setState({data:content})
+        this.listView.updateDataSource(this.state.data)	
+    },(error)=>{alert(error)});
   }
+
 
   onFetch =async(page = 1, startFetch, abortFetch) => {
     NativeModules.WifiM.getInfo((success)=>{
@@ -56,13 +75,6 @@ export default class App extends Component {
     },(error)=>{alert(error)});
     startFetch(this.state.data,20);
   }
-
-  _setState=(data)=>{
-    this.setState({
-      currentBuilding: data[0],
-      currentFloor: data[1]
-  })
-  }//不确定语法
 
   showPicker = ()=> {
     let locationData = [['仙Ⅰ', '仙Ⅱ'], ['F1', 'F2', 'F3', 'F4', 'F5']]
@@ -75,12 +87,19 @@ export default class App extends Component {
         pickerBg: [255,255,255,1],
         pickerToolBarFontSize: 16,
         pickerData: locationData,
-        selectedValue: ['仙Ⅰ', '1F'],
+        selectedValue: ['仙Ⅱ', 'F5'],
         onPickerConfirm: (data) => {
-            this._setState(data)
+        this.setState({
+          currentBuilding: data[0],
+          currentFloor: parseInt(data[1].substring(1,2)),
+        })
         }
     });
     Picker.show();
+  }
+
+  changePath=()=>{
+    this.setState({path:[511,522,524]})
   }
 
   render(){
@@ -91,8 +110,14 @@ export default class App extends Component {
         duration={600}
         style={styles.header} 
         useNativeDriver>
-          <_Map/>
+          <_Map 
+          path={this.state.path}
+          floor={this.state.currentFloor}
+          building={this.state.currentBuilding}
+          start={this.state.start}/>
         </Animatable.View>
+        <Text>{this.state.des}</Text>
+        <Text>{this.state.start}</Text>
         <UltimateListView
             ref={(ref) => this.listView = ref}
             onFetch={this.onFetch}
@@ -110,6 +135,9 @@ export default class App extends Component {
             //separator={this.renderSeparatorView}                
         />
         <ActionButton buttonColor="rgba(231,76,60,1)" position="right" verticalOrientation='up'>
+          <ActionButton.Item buttonColor='#9b59b6' title="动画TEST" onPress={this.changePath}>
+            <Icon name="md-repeat" style={styles.actionButtonIcon}/>
+          </ActionButton.Item>
           <ActionButton.Item buttonColor='#9b59b6' title="权限重新申请" onPress={this.requestReadPermission}>
             <Icon name="md-repeat" style={styles.actionButtonIcon}/>
           </ActionButton.Item>
@@ -124,10 +152,27 @@ export default class App extends Component {
     );
   }
 
+  setStart=(roomName,level)=>{
+    if(parseInt(level)>this.state.level)
+      this.setState({
+        start:parseInt(roomName.substring(roomName.length-3,roomName.length)),
+        currentFloor:parseInt(roomName.substring(roomName.length-3,roomName.length-2)),
+        level:parseInt(level)
+      });
+  }
+
+  setDes=(roomName)=>{
+    this.setState({
+      des:parseInt(roomName.substring(roomName.length-3,roomName.length))
+    });
+  }
+
 
   renderItem = (item, index, separator) => {
       return(
           <ListItemElement
+          setStart={this.setStart}
+          setDes={this.setDes}
           MacAdd={item.MacAdd}
           distance={item.Level}/>
       )
@@ -152,8 +197,8 @@ export default class App extends Component {
         this.show(err.toString())
     }
   }
-
 }
+
 var styles = StyleSheet.create({
   actionButtonIcon: {
     fontSize: 20,

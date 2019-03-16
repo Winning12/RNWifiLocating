@@ -10,7 +10,8 @@ import {
     Dimensions,
     ART
 } from 'react-native';
-import { ListItem,Divider } from 'react-native-elements'
+import moment from 'moment';
+import { ListItem } from 'react-native-elements'
 import * as Animatable from 'react-native-animatable';
 import TouchableScale from 'react-native-touchable-scale'; 
 import LinearGradient from 'react-native-linear-gradient';
@@ -21,10 +22,84 @@ export default class ListItemElement extends Component {
         super(props);
         this.state={
             fold:true,
+            data:[],
             classroom:{"course":"","roomName":"获取教室信息中"},
         }
     }
 
+    componentDidMount(){
+        fetch('http://118.25.56.186:8080/api/classroom/get/'+this.props.MacAdd, {
+        method: 'GET',
+        headers: {
+              'Content-Type': 'application/json'
+        }
+        }).then((response) => response.json())
+        .then((response) => {
+            var json = response;
+            if(json.status=="FAIL")
+                this.setState({data:json.detail,classroom:{"course":"","roomName":""}})
+            else{
+                //确认为教室后，判定所在位置，并记录教室信息
+                this.props.setStart(json.detail.roomName,this.props.distance)
+                this.setState({data:json.detail,classroom:{"course":"","roomName":json.detail.roomName}})
+            }
+            this.getCourse(json.detail.roomName)//进一步查询获得该教室当前课程信息
+        })
+        .catch((error) => {
+            if (error) {
+                console.log('error', error);
+            }
+            this.setState({classroom:{"course":"","roomName":""}})
+        });
+    }
+
+    getCourse=(roomName)=>{
+        var day=parseInt(moment().format('d'));
+        var period=this.getPeriod()
+        var formData=new FormData();
+        formData.append("day",day)
+        formData.append("period",period)
+        formData.append("roomName",roomName)
+        if(period!=0){
+            fetch('http://118.25.56.186:8080/api/section/get', {
+                method: 'POST',
+                body:formData,
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+        }).then((response) => response.json())
+        .then((response) => {
+            var json = response;
+            if(json.status!="FAIL")
+                this.setState({
+                    classroom:{"course":json.detail.courseName,"roomName":roomName},
+                })
+        })
+        .catch((error) => {
+            if (error) {
+                console.log('error', error);
+            }
+        });
+        }
+    }
+
+    getPeriod(){
+        var h=parseInt(moment().format('HH'));
+        var m=parseInt(moment().format('mm'));
+        if(h>=21&&m>30) return 0
+        if(h>=20&&m>30) return 11
+        if(h>=19&&m>30) return 10
+        if(h>=18&&m>30) return 9
+        if(h>=17&&m>10) return 8
+        if(h>=16&&m>10) return 7
+        if(h>=15) return 6
+        if(h>=14) return 5
+        if(h>=11) return 4
+        if(h>=10) return 3
+        if(h>=9) return 2
+        if(h>=8) return 1
+        return 0
+    }
     
     handleCourse(){
         //get course from macAddress
@@ -32,22 +107,29 @@ export default class ListItemElement extends Component {
         if(course!="")
             return course;//暂定，需决定后端的course模型
         else
-            return "空教室   无课程安排";
+            return "空教室   暂无课程安排";
     }
 
     render() {
-        return (
-            <View style={styles.container}>
-                {this.renderTitle()}
-                {this.renderDetail()}
-            </View>
-        );
+        if(this.state.classroom.roomName=="")
+            return null
+            // return <Text>{this.props.MacAdd}" level:"{this.props.distance}</Text>;
+        else
+            return (
+                <View style={styles.container}>
+                    {this.renderTitle()}
+                    {this.renderDetail()}
+                </View>
+            );
     }
 
     renderTitle=()=>{
         return(
             <ListItem
-            onPress={()=>this.setState({fold:!this.state.fold})}
+            onPress={()=>{
+                this.setState({fold:!this.state.fold})
+                this.props.setDes(this.state.classroom.roomName)
+            }}
             containerStyle={{borderRadius:5}}
             Component={TouchableScale}
             friction={90} //
@@ -63,6 +145,7 @@ export default class ListItemElement extends Component {
             title={this.state.classroom.roomName}
             titleStyle={{ fontWeight: 'bold',fontSize:20 }}
             subtitle={this.handleCourse()}
+            rightTitle={this.props.distance}
             chevronColor="white"
             chevron
             />
@@ -81,7 +164,7 @@ export default class ListItemElement extends Component {
             bottomDivider
             key={1}
             leftIcon={{ name:'inbox',type:'octicon',size:20,style:{margin:0,padding:0} }}
-            title="课桌类型：XXXX"
+            title={"课桌类型："+this.state.data.deskType}
             titleStyle={{ fontSize:17 }}
             />
             <ListItem
@@ -89,7 +172,15 @@ export default class ListItemElement extends Component {
             bottomDivider
             key={2}
             leftIcon={{ name:'organization',type:'octicon',size:20,style:{margin:0,padding:0} }}
-            title="预估人数：XXXX"
+            title={"教室容量："+this.state.data.capacity}
+            titleStyle={{ fontSize:17 }}
+            />
+            <ListItem
+            containerStyle={styles.itemStyle}
+            bottomDivider
+            key={2}
+            leftIcon={{ name:'broadcast',type:'octicon',size:20,style:{margin:0,padding:0} }}
+            title="估计人数："
             titleStyle={{ fontSize:17 }}
             />
         </Animatable.View>
