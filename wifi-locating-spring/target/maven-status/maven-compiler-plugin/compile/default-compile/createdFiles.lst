@@ -1,0 +1,16 @@
+cloud\config\FileUploadConfiguration.class
+cloud\model\classroom\Classroom.class
+cloud\model\classroom\Map.class
+cloud\model\section\SectionService.class
+cloud\controller\Result.class
+cloud\model\section\Section.class
+cloud\model\section\SectionRepository.class
+cloud\model\section\SectionController.class
+cloud\controller\BaseController.class
+cloud\Application.class
+cloud\config\CustomMVCConfiguration.class
+cloud\model\classroom\ClassroomService.class
+cloud\config\SwaggerConfig.class
+cloud\model\classroom\ClassroomRepository.class
+cloud\model\classroom\ClassroomController.class
+cloud\model\classroom\Vertex.class
