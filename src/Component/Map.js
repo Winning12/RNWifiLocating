@@ -24,7 +24,7 @@ const { width} = Dimensions.get('window');
 var height=width;
 var _height=0,_width=0
 var x1=0,y1=0
-const img_arr = [[require('../map/default.png')],[require('../map/default.png'),require('../map/default.png'),require('../map/2-3.png'),require('../map/2-4.png'),require('../map/2-5.png')]]
+const img_arr = [[require('../map/default.png')],[require('../map/2-1.png'),require('../map/2-2.png'),require('../map/2-3.png'),require('../map/2-4.png'),require('../map/2-5.png')]]
 const data_arr = [data23,data23,data23,data24,data25]//数据不足，仅采集了仙二3~5层的位置数据
 var data=data_arr[0]
 export default class _Map extends Component {
@@ -51,11 +51,6 @@ export default class _Map extends Component {
     
     componentDidMount()
     {
-        this.setState({
-            path:this.props.path,
-            floor:this.props.floor,
-        })
-        
         Animated.spring(
             this.state.lineFillAnimation,
             {
@@ -64,6 +59,11 @@ export default class _Map extends Component {
                 tension: 5
             }
         ).start();
+        this.initPath()
+    }
+
+    initPath(){
+        
     }
 
     init(){
@@ -117,8 +117,8 @@ export default class _Map extends Component {
             <Image
             style={{
                 position: 'absolute',
-                left:x0,
-                top:y0,
+                left:x0-width/20,
+                top:y0-width/20,
                 width:width/10,
                 height:width/10
             }} 
@@ -130,6 +130,8 @@ export default class _Map extends Component {
     renderPaths(pathList){
         this.init()
         this.initMap()
+        if(pathList==null||pathList.length==0)
+            return null
         var Path="M"
         for(var i=0;i<data.length;i++){
             if(data[i][0]==pathList[0]){
@@ -194,7 +196,6 @@ export default class _Map extends Component {
             <G fill="none" stroke="#3d5875">
                 {this.renderCurPosi()}
                 {this.renderPaths(this.props.path)}
-                
             </G>
             </Svg>
             </ImageBackground>
