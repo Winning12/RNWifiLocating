@@ -60,7 +60,7 @@ export default class App extends Component {
         // content.sort(this.up)
         this.setState({data:content})
         this.listView.refresh()
-    },(error)=>{alert(error)});
+    },(error)=>{console.log(error)});
   }
 
   getPath=()=>{
@@ -100,19 +100,19 @@ export default class App extends Component {
         // content.sort(this.up)
         this.setState({data:content})
         this.listView.updateDataSource(this.state.data)	
-    },(error)=>{alert(error)});
+    },(error)=>{console.log(error)});
   }
 
 
   onFetch =async(page = 1, startFetch, abortFetch) => {
     NativeModules.WifiM.getInfo((success)=>{
         this.setState({data:JSON.parse(success).content})
-    },(error)=>{alert(error)});
+    },(error)=>{console.log(error)});
     startFetch(this.state.data,20);
   }
 
   showPicker = ()=> {
-    let locationData = [['仙Ⅰ', '仙Ⅱ'], ['F1', 'F2', 'F3', 'F4', 'F5']]
+    let locationData = [['仙Ⅰ', '仙Ⅱ','计科楼'], ['F1', 'F2', 'F3', 'F4', 'F5']]
     Picker.init({
         pickerCancelBtnText:'取消',
         pickerConfirmBtnText:'确认',
@@ -137,7 +137,7 @@ export default class App extends Component {
     return (
         <View>
           <View style={{flex:1,flexDirection:'column',alignItem:'center',justifyContent:'center'}}>
-            <Text style={{fontSize:25}}>下为所有该层教室，方便调试</Text>
+            <Text style={{fontSize:17}}>下为所有该层教室</Text>
           </View>
           <FlatList
           data={rooms[this.state.currentFloor-2]}

@@ -55,6 +55,7 @@ export default class ListItemElement extends Component {
 
     getCourse=(roomName)=>{
         var day=parseInt(moment().format('d'));
+        if(day==0)day=7
         var period=this.getPeriod()
         var formData=new FormData();
         formData.append("day",day)

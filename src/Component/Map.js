@@ -15,6 +15,7 @@ import Svg,{
     Path,
     G
 } from 'react-native-svg';
+import data22 from '../Json/2-2.json'
 import data23 from '../Json/2-3.json'
 import data24 from '../Json/2-4.json'
 import data25 from '../Json/2-5.json'
@@ -24,8 +25,8 @@ const { width} = Dimensions.get('window');
 var height=width;
 var _height=0,_width=0
 var x1=0,y1=0
-const img_arr = [[require('../map/default.png')],[require('../map/2-1.png'),require('../map/2-2.png'),require('../map/2-3.png'),require('../map/2-4.png'),require('../map/2-5.png')]]
-const data_arr = [data23,data23,data23,data24,data25]//数据不足，仅采集了仙二3~5层的位置数据
+const img_arr = [[require('../map/cs2.png')],[require('../map/default.png')],[require('../map/2-1.png'),require('../map/2-2.png'),require('../map/2-3.png'),require('../map/2-4.png'),require('../map/2-5.png')]]
+const data_arr = [data23,data22,data23,data24,data25]//数据不足，仅采集了仙二3~5层的位置数据
 var data=data_arr[0]
 export default class _Map extends Component {
     constructor(props){
@@ -90,11 +91,18 @@ export default class _Map extends Component {
     initData(){
         return data_arr[this.props.floor-1]
     }
+    
     initMap(){  
         var mapSrc="";
-        if(this.props.building=="仙Ⅱ")
-            mapSrc=img_arr[1][this.props.floor-1]
+        if(this.props.building=="仙Ⅱ"){
+            mapSrc=img_arr[2][this.props.floor-1]
+        }else{
+        if(this.props.building=="计科楼")
+            mapSrc=img_arr[0][0]
         else
+            mapSrc=img_arr[1][0]
+        }
+        if(this.props.floor==2)
             mapSrc=img_arr[0][0]
         const orderImage = Image.resolveAssetSource(mapSrc)
         _width=orderImage.width
